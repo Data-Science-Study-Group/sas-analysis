@@ -37,3 +37,9 @@ proc sql;
     select distinct seasonality
     from unemployment;
 quit;
+
+* keep only seasonally adjusted records ;
+data unemployment_sa (drop=seasonality);
+    set unemployment;
+    if seasonality = 'sa' then output;
+run;

@@ -28,8 +28,8 @@ run;
 
 * reorder variables ;
 data unemployment;
-    retain country seasonality year_month year month unemployment unemployment_rate;
-    set unemployment;
+    retain country seasonality year month unemployment unemployment_rate;
+    set unemployment (drop=year_month);
 run;
 
 * unique `seasonality` values ;

@@ -25,3 +25,10 @@ data unemployment;
     year = scan(year_month, 1, '.') * 1;
     month = scan(year_month, 2, '.') * 1;
 run;
+
+* reorder variables ;
+data unemployment;
+    retain  country seasonality year_month
+            year month unemployment unemployment_rate;
+    set unemployment;
+run;

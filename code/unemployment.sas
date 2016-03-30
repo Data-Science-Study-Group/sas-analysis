@@ -59,5 +59,10 @@ run;
 * time period ;
 proc sql;
     select min(year) as year_first, max(year) as year_last
-    from unemployment;
+    from unemployment_sa;
 quit;
+
+* years of available data ;
+proc freq data=unemployment_sa;
+    table country*year / nocol norow nopercent;
+run;

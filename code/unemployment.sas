@@ -43,3 +43,15 @@ data unemployment_sa (drop=seasonality);
     set unemployment;
     if seasonality = 'sa' then output;
 run;
+
+* number of unique countries ;
+proc sql;
+    select count(distinct country)
+    from unemployment;
+quit;
+
+* means ;
+proc means data=unemployment_sa mean std min max;
+    var unemployment;
+    class country;
+run;

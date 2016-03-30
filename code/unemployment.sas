@@ -14,14 +14,14 @@ data countries;
             latitude
             longitude;
 run;
-data country_totals;
+data unemployment;
     infile '/folders/myshortcuts/data/country_total.csv' dlm=',' dsd firstobs=2;
     input country : $2. seasonality : $5. month unemployment unemployment_rate;
 run;
 
 * split year and month ;
-data country_totals;
-    set country_totals (rename=(month=year_month));
+data unemployment;
+    set unemployment (rename=(month=year_month));
     year = scan(year_month, 1, '.') * 1;
     month = scan(year_month, 2, '.') * 1;
 run;

@@ -55,3 +55,9 @@ proc means data=unemployment_sa mean std min max;
     var unemployment;
     class country;
 run;
+
+* time period ;
+proc sql;
+    select min(year) as year_first, max(year) as year_last
+    from unemployment;
+quit;

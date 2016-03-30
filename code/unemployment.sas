@@ -28,7 +28,12 @@ run;
 
 * reorder variables ;
 data unemployment;
-    retain  country seasonality year_month
-            year month unemployment unemployment_rate;
+    retain country seasonality year_month year month unemployment unemployment_rate;
     set unemployment;
 run;
+
+* unique `seasonality` values ;
+proc sql;
+    select distinct seasonality
+    from unemployment;
+quit;

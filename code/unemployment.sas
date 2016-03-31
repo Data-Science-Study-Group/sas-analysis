@@ -16,7 +16,7 @@ data countries;
 run;
 data unemployment;
     infile '/folders/myshortcuts/data/country_total.csv' dlm=',' dsd firstobs=2;
-    input country : $2. seasonality : $5. month unemployment unemployment_rate;
+    input country : $2. seasonality : $5. month : $7. unemployment unemployment_rate;
 run;
 
 * split year and month ;
@@ -47,14 +47,8 @@ run;
 * number of unique countries ;
 proc sql;
     select count(distinct country)
-    from unemployment;
+    from unemployment_sa;
 quit;
-
-* means ;
-proc means data=unemployment_sa mean std min max;
-    var unemployment;
-    class country;
-run;
 
 * time period ;
 proc sql;
@@ -62,7 +56,43 @@ proc sql;
     from unemployment_sa;
 quit;
 
+* univariate statistics ;
+proc univariate data=unemployment_sa;
+    var unemployment unemployment_rate;
+run;
+
+* sort by country ;
+proc sort data=unemployment_sa;
+    by country year month;
+run;
+proc sort data=countries (keep=country country_group name_en)
+    force;
+    by country;
+run;
+
+* merge ;
+data unemployment_sa (rename=(name_en=country_name));
+    retain country country_group name_en;
+    merge unemployment_sa countries;
+    by country;
+    if country = 'de' then do;
+        name_en = scan(name_en, 1, ' ');
+    end;
+run;
+
 * years of available data ;
 proc freq data=unemployment_sa;
-    table country*year / nocol norow nopercent;
+    table country_name*year / nocol norow nopercent;
+run;
+
+* unemployment means, by country ;
+proc means data=unemployment_sa nmiss mean std min max;
+    var unemployment;
+    class country_name;
+run;
+
+* unemployment rate means, by country ;
+proc means data=unemployment_sa nmiss mean std min max;
+    var unemployment_rate;
+    class country_name;
 run;

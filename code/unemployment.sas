@@ -132,3 +132,40 @@ proc sgplot data=unemployment_sa
     series x = date_var y = unemployment_rate / group=country_name;
     keylegend / title="";
 run;
+
+
+/* extras */
+* sort ;
+proc sort data=unemployment_sa;
+    by country_name year month;
+run;
+
+* summarize by country and year ;
+proc summary data=unemployment_sa;
+    output out=unemployment_by_year (drop=_TYPE_ _FREQ_)
+    mean=;
+    by country_name year;
+    var unemployment_rate;
+run;
+
+* transpose ;
+proc transpose data=unemployment_by_year
+    out=uby_w (drop=_NAME_)
+    prefix=yr;
+    by country_name;
+    id year;
+    var unemployment_rate;
+run;
+
+* reorder ;
+data uby_w;
+    retain country_name yr1983-yr2010;
+    set uby_w;
+run;
+
+* number missing ;
+data uby_w;
+    set uby_w;
+    array years yr1983-yr2010;
+    n_missing = cmiss(of years[*]);
+run;

@@ -96,3 +96,39 @@ proc means data=unemployment_sa nmiss mean std min max;
     var unemployment_rate;
     class country_name;
 run;
+
+* unemployment rate means, by country type ;
+proc means data=unemployment_sa nmiss mean std min max;
+    var unemployment_rate;
+    class country_group;
+run;
+
+* number of countries, by country group ;
+proc freq data=countries;
+    table country_group / nopercent nocum;
+run;
+
+* date formats ;
+data unemployment_sa;
+    retain country country_group country_name year month date_var;
+    set unemployment_sa;
+    date_var = input(cats(month, '01', year), MMDDYY8.);
+    format date_var MMDDYY8.;
+run;
+
+* plotting ;
+proc sgplot data=unemployment_sa;
+    title 'European Unemployment';
+    xaxis label = " ";
+    yaxis label = "Unemployment Rate (%)";
+    series x = date_var y = unemployment_rate / group=country_name;
+run;
+proc sgplot data=unemployment_sa
+        (where=(country_name='Spain' or
+                country_name='Portugal'));
+    title 'Spanish and Portuguese Unemployment';
+    xaxis label = " ";
+    yaxis grid label = "Unemployment Rate (%)";
+    series x = date_var y = unemployment_rate / group=country_name;
+    keylegend / title="";
+run;
